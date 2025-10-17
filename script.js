@@ -399,3 +399,302 @@ window.addEventListener('resize', () => {
         document.body.classList.remove('mobile-view');
     }
 });
+
+class TextToSpeechConverter {
+    constructor() {
+        this.speech = new SpeechSynthesisUtterance();
+        this.synth = window.speechSynthesis;
+        this.isSpeaking = false;
+        this.isPaused = false;
+        
+        this.initializeElements();
+        this.bindEvents();
+        this.loadVoices();
+        
+        // Event listener for voices loaded
+        speechSynthesis.addEventListener('voiceschanged', () => {
+            this.loadVoices();
+        });
+    }
+
+    initializeElements() {
+        // Input elements
+        this.textInput = document.getElementById('textInput');
+        this.voiceSelect = document.getElementById('voiceSelect');
+        this.rateSelect = document.getElementById('rateSelect');
+        this.pitchSelect = document.getElementById('pitchSelect');
+        this.volumeSelect = document.getElementById('volumeSelect');
+        
+        // Buttons
+        this.speakBtn = document.getElementById('speakBtn');
+        this.pauseBtn = document.getElementById('pauseBtn');
+        this.resumeBtn = document.getElementById('resumeBtn');
+        this.stopBtn = document.getElementById('stopBtn');
+        
+        // Stats
+        this.charCount = document.getElementById('charCount');
+        this.wordCount = document.getElementById('wordCount');
+        
+        // Progress
+        this.progressSection = document.getElementById('progressSection');
+        this.progressFill = document.getElementById('progressFill');
+        this.progressText = document.getElementById('progressText');
+        
+        // Language buttons
+        this.langButtons = document.querySelectorAll('.lang-btn');
+        
+        // Sample buttons
+        this.sampleButtons = document.querySelectorAll('.sample-btn');
+    }
+
+    bindEvents() {
+        // Text input events
+        this.textInput.addEventListener('input', () => {
+            this.updateStats();
+        });
+
+        // Control buttons
+        this.speakBtn.addEventListener('click', () => this.speak());
+        this.pauseBtn.addEventListener('click', () => this.pause());
+        this.resumeBtn.addEventListener('click', () => this.resume());
+        this.stopBtn.addEventListener('click', () => this.stop());
+
+        // Settings changes
+        this.voiceSelect.addEventListener('change', () => this.updateVoice());
+        this.rateSelect.addEventListener('change', () => this.updateSettings());
+        this.pitchSelect.addEventListener('change', () => this.updateSettings());
+        this.volumeSelect.addEventListener('change', () => this.updateSettings());
+
+        // Language buttons
+        this.langButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => this.changeLanguage(e.target));
+        });
+
+        // Sample text buttons
+        this.sampleButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.textInput.value = e.target.dataset.text;
+                this.updateStats();
+            });
+        });
+
+        // Speech events
+        this.speech.onstart = () => this.onSpeechStart();
+        this.speech.onend = () => this.onSpeechEnd();
+        this.speech.onerror = (event) => this.onSpeechError(event);
+        this.speech.onboundary = (event) => this.onSpeechBoundary(event);
+    }
+
+    loadVoices() {
+        // Clear existing options
+        this.voiceSelect.innerHTML = '<option value="">डिफॉल्ट आवाज़</option>';
+        
+        const voices = this.synth.getVoices();
+        
+        voices.forEach(voice => {
+            const option = document.createElement('option');
+            option.value = voice.name;
+            option.textContent = `${voice.name} (${voice.lang})`;
+            this.voiceSelect.appendChild(option);
+        });
+    }
+
+    updateVoice() {
+        const voices = this.synth.getVoices();
+        const selectedVoice = this.voiceSelect.value;
+        
+        if (selectedVoice) {
+            const voice = voices.find(v => v.name === selectedVoice);
+            if (voice) {
+                this.speech.voice = voice;
+            }
+        }
+    }
+
+    updateSettings() {
+        this.speech.rate = parseFloat(this.rateSelect.value);
+        this.speech.pitch = parseFloat(this.pitchSelect.value);
+        this.speech.volume = parseFloat(this.volumeSelect.value);
+    }
+
+    updateStats() {
+        const text = this.textInput.value;
+        const charCount = text.length;
+        const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+        
+        this.charCount.textContent = charCount;
+        this.wordCount.textContent = wordCount;
+    }
+
+    changeLanguage(button) {
+        // Update active button
+        this.langButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        const lang = button.dataset.lang;
+        
+        // Update speech language if available
+        const voices = this.synth.getVoices();
+        const voice = voices.find(v => v.lang.startsWith(lang));
+        
+        if (voice) {
+            this.speech.voice = voice;
+            this.voiceSelect.value = voice.name;
+        }
+        
+        this.showMessage(`भाषा बदली गई: ${button.textContent}`, 'success');
+    }
+
+    speak() {
+        const text = this.textInput.value.trim();
+        
+        if (!text) {
+            this.showMessage('कृपया बोलने के लिए कुछ टेक्स्ट डालें!', 'error');
+            return;
+        }
+
+        if (this.isSpeaking) {
+            this.stop();
+        }
+
+        this.speech.text = text;
+        this.updateSettings();
+        this.updateVoice();
+        
+        this.synth.speak(this.speech);
+    }
+
+    pause() {
+        if (this.isSpeaking && !this.isPaused) {
+            this.synth.pause();
+            this.isPaused = true;
+            this.updateButtonStates();
+            this.progressText.textContent = 'रुका हुआ...';
+        }
+    }
+
+    resume() {
+        if (this.isSpeaking && this.isPaused) {
+            this.synth.resume();
+            this.isPaused = false;
+            this.updateButtonStates();
+            this.progressText.textContent = 'बोला जा रहा है...';
+        }
+    }
+
+    stop() {
+        this.synth.cancel();
+        this.isSpeaking = false;
+        this.isPaused = false;
+        this.updateButtonStates();
+        this.hideProgress();
+    }
+
+    onSpeechStart() {
+        this.isSpeaking = true;
+        this.isPaused = false;
+        this.updateButtonStates();
+        this.showProgress();
+        this.speakBtn.classList.add('speaking');
+    }
+
+    onSpeechEnd() {
+        this.isSpeaking = false;
+        this.isPaused = false;
+        this.updateButtonStates();
+        this.hideProgress();
+        this.speakBtn.classList.remove('speaking');
+        this.showMessage('टेक्स्ट बोलना पूरा हुआ!', 'success');
+    }
+
+    onSpeechError(event) {
+        console.error('Speech error:', event);
+        this.isSpeaking = false;
+        this.isPaused = false;
+        this.updateButtonStates();
+        this.hideProgress();
+        this.speakBtn.classList.remove('speaking');
+        this.showMessage('आवाज़ बजाने में समस्या आई!', 'error');
+    }
+
+    onSpeechBoundary(event) {
+        // Update progress based on speech position
+        if (event.name === 'word') {
+            const text = this.textInput.value;
+            const progress = (event.charIndex / text.length) * 100;
+            this.progressFill.style.width = `${progress}%`;
+        }
+    }
+
+    updateButtonStates() {
+        this.speakBtn.disabled = this.isSpeaking && !this.isPaused;
+        this.pauseBtn.disabled = !this.isSpeaking || this.isPaused;
+        this.resumeBtn.disabled = !this.isSpeaking || !this.isPaused;
+        this.stopBtn.disabled = !this.isSpeaking;
+    }
+
+    showProgress() {
+        this.progressSection.style.display = 'block';
+        this.progressFill.style.width = '0%';
+        this.progressText.textContent = 'बोला जा रहा है...';
+    }
+
+    hideProgress() {
+        this.progressSection.style.display = 'none';
+        this.progressFill.style.width = '0%';
+    }
+
+    showMessage(message, type) {
+        // Remove existing message
+        const existingMessage = document.querySelector('.message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        // Create new message
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        
+        messageDiv.textContent = message;
+        document.body.appendChild(messageDiv);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 3000);
+    }
+}
+
+// Initialize the converter when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new TextToSpeechConverter();
+});
+
+// Add CSS for message animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+`;
+document.head.appendChild(style);
