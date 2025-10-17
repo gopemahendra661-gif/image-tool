@@ -3,201 +3,152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Image Tool — Compress | Resize | Crop</title>
+<title>Modern Mobile Image Tool</title>
 <style>
   * {box-sizing: border-box;}
   body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #141E30, #243B55);
-    color: #fff;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 0; padding: 0;
+    display: flex; flex-direction: column; align-items: center;
     min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
   }
-  h1 {
-    margin-top: 30px;
-    font-size: 2rem;
-    letter-spacing: 1px;
-  }
+  body.light { background: #f4f4f9; color: #111; }
+  body.dark { background: linear-gradient(135deg,#141E30,#243B55); color: #fff; }
+
+  h1 { margin-top: 20px; font-size: 2rem; text-align: center; }
   .tool-card {
-    background: rgba(255,255,255,0.1);
     backdrop-filter: blur(10px);
     padding: 25px;
-    margin-top: 20px;
+    margin: 20px;
     border-radius: 20px;
-    width: 90%;
-    max-width: 700px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    width: 90%; max-width: 700px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    display: flex; flex-direction: column; align-items: center;
+    transition: background 0.3s;
   }
-  input, button {
-    margin: 8px;
-    padding: 10px 14px;
-    border: none;
-    border-radius: 8px;
-    outline: none;
-    font-size: 1rem;
+  .tool-card.light { background: rgba(255,255,255,0.8); color: #111; }
+  .tool-card.dark { background: rgba(255,255,255,0.1); color: #fff; }
+
+  .file-input-wrapper {
+    display: flex; flex-direction: column; align-items: center; width: 100%;
   }
   input[type="file"] {
-    background: #1e88e5;
-    color: white;
-    cursor: pointer;
+    margin-bottom: 5px; padding: 10px 14px;
+    border-radius: 8px; border: none;
+    background: #1e88e5; color: #fff; cursor: pointer;
+    width: 100%; max-width: 300px; text-overflow: ellipsis;
+    overflow: hidden; white-space: nowrap;
   }
-  input[type="number"] {
-    width: 70px;
-    text-align: center;
+  .file-name {
+    max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-size: 0.9rem; margin-bottom: 10px;
   }
+  input[type="number"] { width: 70px; text-align: center; margin: 5px; }
   button {
-    background: #00c6ff;
-    color: #fff;
+    margin: 8px; padding: 10px 14px; border: none; border-radius: 8px;
+    background: #00c6ff; color: #fff; cursor: pointer; transition: 0.3s;
+  }
+  button:hover { background: #0091c7; }
+  canvas { border: 2px solid #00bcd4; border-radius: 10px; margin-top: 15px; max-width: 100%; height: auto; }
+  #preview { margin-top: 15px; display: none; width: 100%; text-align: center; }
+  img.preview-img { max-width: 100%; border-radius: 12px; margin-top: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.4); }
+
+  .theme-toggle {
+    margin-top: 10px; padding: 6px 12px; border-radius: 8px; background: #ffb74d; color: #111;
     cursor: pointer;
-    transition: 0.3s;
   }
-  button:hover {
-    background: #0091c7;
-  }
-  canvas {
-    border: 2px solid #00bcd4;
-    border-radius: 10px;
-    margin-top: 15px;
-    background: #111;
-    max-width: 100%;
-    height: auto;
-  }
-  #preview {
-    margin-top: 15px;
-    display: none;
-  }
-  img.preview-img {
-    max-width: 100%;
-    border-radius: 12px;
-    margin-top: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
-  }
-  footer {
-    position: fixed;
-    bottom: 10px;
-    text-align: center;
-    font-size: 0.9rem;
-    opacity: 0.7;
-  }
+  footer { text-align: center; font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px; }
 </style>
 </head>
-<body>
-  <h1>🖼️ Modern Image Tool</h1>
-  <div class="tool-card">
+<body class="dark">
+
+<h1>🖼️ Modern Mobile Image Tool</h1>
+
+<div class="tool-card dark" id="toolCard">
+  <div class="file-input-wrapper">
     <input type="file" id="fileInput" accept="image/*">
-    <br>
+    <div id="fileName" class="file-name">कोई इमेज नहीं चुनी</div>
+  </div>
+  <div>
     <label>W: <input type="number" id="width" value="400"></label>
     <label>H: <input type="number" id="height" value="400"></label>
     <label>Q: <input type="number" id="quality" value="0.8" step="0.1"></label>
-    <br>
+  </div>
+  <div>
     <button onclick="resizeAndCompress()">Resize + Compress</button>
     <button onclick="enableCrop()">Crop</button>
     <button onclick="downloadImage()">Download</button>
-    <canvas id="canvas"></canvas>
-    <div id="preview">
-      <h3>Preview</h3>
-      <img id="outputImg" class="preview-img" src="">
-    </div>
   </div>
-  <footer>© 2025 ImageTool by Mahendra 🚀</footer>
+  <canvas id="canvas"></canvas>
+  <div id="preview">
+    <h3>Preview</h3>
+    <img id="outputImg" class="preview-img" src="">
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Light/Dark Theme</button>
+</div>
+
+<footer>© 2025 ImageTool by Mahendra 🚀</footer>
 
 <script>
+const body = document.body;
+const toolCard = document.getElementById('toolCard');
 const fileInput = document.getElementById('fileInput');
+const fileNameDisplay = document.getElementById('fileName');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const preview = document.getElementById('preview');
 const outputImg = document.getElementById('outputImg');
 
 let image = new Image();
-let cropMode = false;
-let startX, startY, endX, endY, isDragging = false;
+let cropMode = false, startX, startY, endX, endY, isDragging = false;
 
 fileInput.addEventListener('change', e => {
   const file = e.target.files[0];
-  if (!file) return;
+  if(!file) return;
+  fileNameDisplay.textContent = file.name;
   const reader = new FileReader();
-  reader.onload = () => {
-    image.onload = () => drawImageToCanvas(image);
-    image.src = reader.result;
-  };
+  reader.onload = () => { image.onload = () => drawImageToCanvas(image); image.src = reader.result; };
   reader.readAsDataURL(file);
 });
 
 function drawImageToCanvas(img) {
-  const maxWidth = 650;
+  const maxWidth = window.innerWidth * 0.9;
   const scale = Math.min(maxWidth / img.width, 1);
   const newWidth = img.width * scale;
   const newHeight = img.height * scale;
-  canvas.width = newWidth;
-  canvas.height = newHeight;
+  canvas.width = newWidth; canvas.height = newHeight;
   ctx.drawImage(img, 0, 0, newWidth, newHeight);
 }
 
 function resizeAndCompress() {
-  if (!image.src) return alert("कृपया पहले इमेज चुनें!");
-  const w = parseInt(width.value);
-  const h = parseInt(height.value);
-  const q = parseFloat(quality.value);
-  canvas.width = w;
-  canvas.height = h;
+  if(!image.src) return alert("कृपया पहले इमेज चुनें!");
+  const w = parseInt(width.value), h = parseInt(height.value), q = parseFloat(quality.value);
+  canvas.width = w; canvas.height = h;
   ctx.drawImage(image, 0, 0, w, h);
   const compressed = canvas.toDataURL("image/jpeg", q);
-  outputImg.src = compressed;
-  preview.style.display = "block";
+  outputImg.src = compressed; preview.style.display = "block";
 }
 
 function enableCrop() {
-  cropMode = true;
-  alert("Crop मोड चालू है — माउस से खींचकर क्षेत्र चुनें");
+  cropMode = true; alert("Crop मोड चालू है — माउस/टच से खींचकर क्षेत्र चुनें");
 }
 
-canvas.addEventListener('mousedown', e => {
-  if (!cropMode) return;
-  const rect = canvas.getBoundingClientRect();
-  startX = e.clientX - rect.left;
-  startY = e.clientY - rect.top;
-  isDragging = true;
-});
-
-canvas.addEventListener('mousemove', e => {
-  if (!isDragging || !cropMode) return;
-  const rect = canvas.getBoundingClientRect();
-  endX = e.clientX - rect.left;
-  endY = e.clientY - rect.top;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawImageToCanvas(image);
-  ctx.strokeStyle = "#00e5ff";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(startX, startY, endX - startX, endY - startY);
-});
-
-canvas.addEventListener('mouseup', () => {
-  if (!cropMode) return;
-  isDragging = false;
-  cropMode = false;
-  const cropW = endX - startX;
-  const cropH = endY - startY;
-  const croppedData = ctx.getImageData(startX, startY, cropW, cropH);
-  canvas.width = cropW;
-  canvas.height = cropH;
-  ctx.putImageData(croppedData, 0, 0);
-  const croppedURL = canvas.toDataURL("image/jpeg", 1.0);
-  outputImg.src = croppedURL;
-  preview.style.display = "block";
-});
+canvas.addEventListener('mousedown', e => { if(!cropMode) return; const rect = canvas.getBoundingClientRect(); startX=e.clientX-rect.left; startY=e.clientY-rect.top; isDragging=true; });
+canvas.addEventListener('mousemove', e => { if(!isDragging||!cropMode) return; const rect = canvas.getBoundingClientRect(); endX=e.clientX-rect.left; endY=e.clientY-rect.top; ctx.clearRect(0,0,canvas.width,canvas.height); drawImageToCanvas(image); ctx.strokeStyle="#00e5ff"; ctx.lineWidth=2; ctx.strokeRect(startX,startY,endX-startX,endY-startY); });
+canvas.addEventListener('mouseup', () => { if(!cropMode) return; isDragging=false; cropMode=false; const cropW=endX-startX, cropH=endY-startY; const croppedData=ctx.getImageData(startX,startY,cropW,cropH); canvas.width=cropW; canvas.height=cropH; ctx.putImageData(croppedData,0,0); outputImg.src=canvas.toDataURL("image/jpeg",1.0); preview.style.display="block"; });
 
 function downloadImage() {
-  if (!outputImg.src) return alert("पहले कोई इमेज एडिट करें!");
-  const a = document.createElement('a');
-  a.href = outputImg.src;
-  a.download = 'edited-image.jpg';
-  a.click();
+  if(!outputImg.src) return alert("पहले कोई इमेज एडिट करें!");
+  const a=document.createElement('a'); a.href=outputImg.src; a.download='edited-image.jpg'; a.click();
+}
+
+function toggleTheme() {
+  if(body.classList.contains('dark')) { body.classList.replace('dark','light'); toolCard.classList.replace('dark','light'); }
+  else { body.classList.replace('light','dark'); toolCard.classList.replace('light','dark'); }
 }
 </script>
 </body>
 </html>
+
 
