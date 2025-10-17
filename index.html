@@ -3,37 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>All-in-One Image Tool</title>
+<title>Image Tool — Compress | Resize | Crop</title>
 <style>
+  * {box-sizing: border-box;}
   body {
-    background: #121212;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #141E30, #243B55);
     color: #fff;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
   }
-  .container {
-    max-width: 800px;
-    margin: auto;
+  h1 {
+    margin-top: 30px;
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+  .tool-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    margin-top: 20px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  }
+  input, button {
+    margin: 8px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    font-size: 1rem;
+  }
+  input[type="file"] {
+    background: #1e88e5;
+    color: white;
+    cursor: pointer;
+  }
+  input[type="number"] {
+    width: 70px;
+    text-align: center;
+  }
+  button {
+    background: #00c6ff;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: #0091c7;
   }
   canvas {
     border: 2px solid #00bcd4;
-    border-radius: 8px;
-    margin-top: 10px;
-    background: #222;
+    border-radius: 10px;
+    margin-top: 15px;
+    background: #111;
     max-width: 100%;
     height: auto;
-  }
-  input[type="file"], input[type="number"], button {
-    margin: 8px;
-    padding: 10px;
-    border-radius: 6px;
-    border: none;
-  }
-  button {
-    background: #00bcd4;
-    color: white;
-    cursor: pointer;
   }
   #preview {
     margin-top: 15px;
@@ -41,31 +72,38 @@
   }
   img.preview-img {
     max-width: 100%;
-    border-radius: 8px;
+    border-radius: 12px;
     margin-top: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  }
+  footer {
+    position: fixed;
+    bottom: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
   }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>🖼️ Image Tool — Compress | Resize | Crop</h1>
-  
-  <input type="file" id="fileInput" accept="image/*">
-  <br>
-  <label>Width: <input type="number" id="width" value="400"></label>
-  <label>Height: <input type="number" id="height" value="400"></label>
-  <label>Quality (0-1): <input type="number" id="quality" value="0.8" step="0.1"></label>
-  <br>
-  <button onclick="resizeAndCompress()">Resize + Compress</button>
-  <button onclick="enableCrop()">Crop Mode</button>
-  <button onclick="downloadImage()">Download</button>
-  
-  <canvas id="canvas"></canvas>
-  <div id="preview">
-    <h3>Preview:</h3>
-    <img id="outputImg" class="preview-img" src="">
+  <h1>🖼️ Modern Image Tool</h1>
+  <div class="tool-card">
+    <input type="file" id="fileInput" accept="image/*">
+    <br>
+    <label>W: <input type="number" id="width" value="400"></label>
+    <label>H: <input type="number" id="height" value="400"></label>
+    <label>Q: <input type="number" id="quality" value="0.8" step="0.1"></label>
+    <br>
+    <button onclick="resizeAndCompress()">Resize + Compress</button>
+    <button onclick="enableCrop()">Crop</button>
+    <button onclick="downloadImage()">Download</button>
+    <canvas id="canvas"></canvas>
+    <div id="preview">
+      <h3>Preview</h3>
+      <img id="outputImg" class="preview-img" src="">
+    </div>
   </div>
-</div>
+  <footer>© 2025 ImageTool by Mahendra 🚀</footer>
 
 <script>
 const fileInput = document.getElementById('fileInput');
@@ -90,7 +128,7 @@ fileInput.addEventListener('change', e => {
 });
 
 function drawImageToCanvas(img) {
-  const maxWidth = 700;
+  const maxWidth = 650;
   const scale = Math.min(maxWidth / img.width, 1);
   const newWidth = img.width * scale;
   const newHeight = img.height * scale;
@@ -132,7 +170,8 @@ canvas.addEventListener('mousemove', e => {
   endY = e.clientY - rect.top;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawImageToCanvas(image);
-  ctx.strokeStyle = "yellow";
+  ctx.strokeStyle = "#00e5ff";
+  ctx.lineWidth = 2;
   ctx.strokeRect(startX, startY, endX - startX, endY - startY);
 });
 
@@ -161,3 +200,4 @@ function downloadImage() {
 </script>
 </body>
 </html>
+
