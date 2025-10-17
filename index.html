@@ -1,172 +1,108 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Mobile Image Tool</title>
-<style>
-  * {box-sizing: border-box;}
-  body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0; padding: 0;
-    display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh;
-    transition: background 0.3s, color 0.3s;
-  }
-  body.light { background: #f4f4f9; color: #111; }
-  body.dark { background: linear-gradient(135deg,#141E30,#243B55); color: #fff; }
-
-  h1 { margin-top: 20px; font-size: 2rem; text-align: center; }
-  .tool-card {
-    backdrop-filter: blur(10px);
-    padding: 25px;
-    margin: 20px;
-    border-radius: 20px;
-    width: 90%; max-width: 700px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    display: flex; flex-direction: column; align-items: center;
-    transition: background 0.3s;
-  }
-  .tool-card.light { background: rgba(255,255,255,0.8); color: #111; }
-  .tool-card.dark { background: rgba(255,255,255,0.1); color: #fff; }
-
-  .file-input-wrapper {
-    display: flex; flex-direction: column; align-items: center; width: 100%;
-  }
-  input[type="file"] {
-    margin-bottom: 5px; padding: 10px 14px;
-    border-radius: 8px; border: none;
-    background: #1e88e5; color: #fff; cursor: pointer;
-    width: 100%; max-width: 300px; text-overflow: ellipsis;
-    overflow: hidden; white-space: nowrap;
-  }
-  .file-name {
-    max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    font-size: 0.9rem; margin-bottom: 10px;
-  }
-  input[type="number"] { width: 70px; text-align: center; margin: 5px; }
-  button {
-    margin: 8px; padding: 10px 14px; border: none; border-radius: 8px;
-    background: #00c6ff; color: #fff; cursor: pointer; transition: 0.3s;
-  }
-  button:hover { background: #0091c7; }
-  canvas { border: 2px solid #00bcd4; border-radius: 10px; margin-top: 15px; max-width: 100%; height: auto; }
-  #preview { margin-top: 15px; display: none; width: 100%; text-align: center; }
-  img.preview-img { max-width: 100%; border-radius: 12px; margin-top: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.4); }
-
-  .theme-toggle {
-    margin-top: 10px; padding: 6px 12px; border-radius: 8px; background: #ffb74d; color: #111;
-    cursor: pointer;
-  }
-  footer { text-align: center; font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px; }
-</style> <script type='text/javascript' src='//pl27868006.effectivegatecpm.com/d2/9f/88/d29f881e20306bcdac258359660571f9.js'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>इमेज एडिटर टूल</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="dark">
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 इमेज एडिटर टूल्स</h1>
+            <p>अपनी तस्वीरों को रीसाइज़, कन्वर्ट और बैकग्राउंड रिमूव करें</p>
+        </header>
 
-<h1>🖼️ Modern Mobile Image Tool</h1>
-<script type="text/javascript">
-	atOptions = {
-		'key' : '31cbda467027fb971edb916014177999',
-		'format' : 'iframe',
-		'height' : 50,
-		'width' : 320,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/31cbda467027fb971edb916014177999/invoke.js"></script>
-<div class="tool-card dark" id="toolCard">
-  <div class="file-input-wrapper">
-    <input type="file" id="fileInput" accept="image/*">
-    <div id="fileName" class="file-name">कोई इमेज नहीं चुनी</div>
-  </div>
-  <div>
-    <label>W: <input type="number" id="width" value="400"></label>
-    <label>H: <input type="number" id="height" value="400"></label>
-    <label>Q: <input type="number" id="quality" value="0.8" step="0.1"></label>
-  </div>
-  <div>
-    <button onclick="resizeAndCompress()">Resize + Compress</button>
-    <button onclick="enableCrop()">Crop</button>
-    <button onclick="downloadImage()">Download</button>
-  </div>
-  <canvas id="canvas"></canvas>
-  <div id="preview">
-    <h3>Preview</h3>
-    <img id="outputImg" class="preview-img" src="">
-  </div>
-  <button class="theme-toggle" onclick="toggleTheme()">Toggle Light/Dark Theme</button>
-</div>
-<script type="text/javascript">
-	atOptions = {
-		'key' : '12ca0c3846356d8e85fc3f545083b8bc',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/12ca0c3846356d8e85fc3f545083b8bc/invoke.js"></script>
-<footer>© 2025 ImageTool by Mahendra 🚀</footer>
+        <!-- टूल सेलेक्शन -->
+        <div class="tool-selection">
+            <button class="tool-btn active" data-tool="resizer">रीसाइज़र</button>
+            <button class="tool-btn" data-tool="converter">कन्वर्टर</button>
+            <button class="tool-btn" data-tool="bgremover">बैकग्राउंड रिमूवर</button>
+        </div>
 
-<script>
-const body = document.body;
-const toolCard = document.getElementById('toolCard');
-const fileInput = document.getElementById('fileInput');
-const fileNameDisplay = document.getElementById('fileName');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const preview = document.getElementById('preview');
-const outputImg = document.getElementById('outputImg');
+        <!-- फ़ाइल अपलोड एरिया -->
+        <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" accept="image/*" hidden>
+            <div class="upload-box" id="uploadBox">
+                <span>📁</span>
+                <p>यहाँ क्लिक करके इमेज अपलोड करें</p>
+                <small>JPEG, PNG, WEBP सपोर्टेड</small>
+            </div>
+        </div>
 
-let image = new Image();
-let cropMode = false, startX, startY, endX, endY, isDragging = false;
+        <!-- टूल सेक्शन -->
+        <div class="tools-container">
+            
+            <!-- रीसाइज़र टूल -->
+            <div class="tool-section active" id="resizerSection">
+                <h3>इमेज रीसाइज़र</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>चौड़ाई:</label>
+                        <input type="number" id="widthInput" min="1" value="800" class="mobile-input">
+                    </div>
+                    <div class="control-group">
+                        <label>ऊँचाई:</label>
+                        <input type="number" id="heightInput" min="1" value="600" class="mobile-input">
+                    </div>
+                    <div class="control-group checkbox-group">
+                        <label>एस्पेक्ट रेशियो लॉक:</label>
+                        <input type="checkbox" id="aspectRatio" checked>
+                    </div>
+                </div>
+                <button id="resizeBtn" class="action-btn">रिसाइज़ करें</button>
+            </div>
 
-fileInput.addEventListener('change', e => {
-  const file = e.target.files[0];
-  if(!file) return;
-  fileNameDisplay.textContent = file.name;
-  const reader = new FileReader();
-  reader.onload = () => { image.onload = () => drawImageToCanvas(image); image.src = reader.result; };
-  reader.readAsDataURL(file);
-});
+            <!-- कन्वर्टर टूल -->
+            <div class="tool-section" id="converterSection">
+                <h3>फॉर्मेट कन्वर्टर</h3>
+                <div class="controls">
+                    <label>आउटपुट फॉर्मेट:</label>
+                    <select id="formatSelect" class="mobile-select">
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPEG</option>
+                        <option value="webp">WEBP</option>
+                    </select>
+                </div>
+                <button id="convertBtn" class="action-btn">कन्वर्ट करें</button>
+            </div>
 
-function drawImageToCanvas(img) {
-  const maxWidth = window.innerWidth * 0.9;
-  const scale = Math.min(maxWidth / img.width, 1);
-  const newWidth = img.width * scale;
-  const newHeight = img.height * scale;
-  canvas.width = newWidth; canvas.height = newHeight;
-  ctx.drawImage(img, 0, 0, newWidth, newHeight);
-}
+            <!-- बैकग्राउंड रिमूवर टूल -->
+            <div class="tool-section" id="bgremoverSection">
+                <h3>बैकग्राउंड रिमूवर</h3>
+                <div class="controls">
+                    <p>इमेज का बैकग्राउंड ट्रांसपेरेंट करेगा</p>
+                    <small>नोट: बेसिक इम्प्लीमेंटेशन</small>
+                </div>
+                <button id="removeBgBtn" class="action-btn">बैकग्राउंड रिमूव करें</button>
+            </div>
 
-function resizeAndCompress() {
-  if(!image.src) return alert("कृपया पहले इमेज चुनें!");
-  const w = parseInt(width.value), h = parseInt(height.value), q = parseFloat(quality.value);
-  canvas.width = w; canvas.height = h;
-  ctx.drawImage(image, 0, 0, w, h);
-  const compressed = canvas.toDataURL("image/jpeg", q);
-  outputImg.src = compressed; preview.style.display = "block";
-}
+        </div>
 
-function enableCrop() {
-  cropMode = true; alert("Crop मोड चालू है — माउस/टच से खींचकर क्षेत्र चुनें");
-}
+        <!-- रिजल्ट प्रिव्यू -->
+        <div class="result-area" id="resultArea" style="display: none;">
+            <div class="result-header">
+                <h3>परिणाम</h3>
+                <button id="resetBtn" class="reset-btn">नई इमेज</button>
+            </div>
+            <div class="image-comparison">
+                <div class="image-box">
+                    <h4>ओरिजिनल</h4>
+                    <canvas id="originalCanvas"></canvas>
+                </div>
+                <div class="image-box">
+                    <h4>प्रोसेस्ड</h4>
+                    <canvas id="processedCanvas"></canvas>
+                </div>
+            </div>
+            <div class="download-section">
+                <button id="downloadBtn" class="download-btn">डाउनलोड करें</button>
+            </div>
+        </div>
 
-canvas.addEventListener('mousedown', e => { if(!cropMode) return; const rect = canvas.getBoundingClientRect(); startX=e.clientX-rect.left; startY=e.clientY-rect.top; isDragging=true; });
-canvas.addEventListener('mousemove', e => { if(!isDragging||!cropMode) return; const rect = canvas.getBoundingClientRect(); endX=e.clientX-rect.left; endY=e.clientY-rect.top; ctx.clearRect(0,0,canvas.width,canvas.height); drawImageToCanvas(image); ctx.strokeStyle="#00e5ff"; ctx.lineWidth=2; ctx.strokeRect(startX,startY,endX-startX,endY-startY); });
-canvas.addEventListener('mouseup', () => { if(!cropMode) return; isDragging=false; cropMode=false; const cropW=endX-startX, cropH=endY-startY; const croppedData=ctx.getImageData(startX,startY,cropW,cropH); canvas.width=cropW; canvas.height=cropH; ctx.putImageData(croppedData,0,0); outputImg.src=canvas.toDataURL("image/jpeg",1.0); preview.style.display="block"; });
+    </div>
 
-function downloadImage() {
-  if(!outputImg.src) return alert("पहले कोई इमेज एडिट करें!");
-  const a=document.createElement('a'); a.href=outputImg.src; a.download='edited-image.jpg'; a.click();
-}
-
-function toggleTheme() {
-  if(body.classList.contains('dark')) { body.classList.replace('dark','light'); toolCard.classList.replace('dark','light'); }
-  else { body.classList.replace('light','dark'); toolCard.classList.replace('light','dark'); }
-}
-</script> <script async="async" data-cfasync="false" src="//pl27867997.effectivegatecpm.com/a73801540e23b96ae309740f81379ab3/invoke.js"></script>
-<div id="container-a73801540e23b96ae309740f81379ab3"></div>
+    <script src="script.js"></script>
 </body>
 </html>
 
