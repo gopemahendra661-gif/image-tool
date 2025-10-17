@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech Converter - टेक्स्ट टू स्पीच कन्वर्टर</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎤 टेक्स्ट टू स्पीच कन्वर्टर</h1>
+            <p>अपना टेक्स्ट डालें और उसे आवाज़ में सुनें</p>
+        </header>
+
+        <div class="converter-box">
+            <!-- Text Input Area -->
+            <div class="input-section">
+                <label for="textInput">टेक्स्ट डालें:</label>
+                <textarea 
+                    id="textInput" 
+                    placeholder="यहाँ अपना टेक्स्ट टाइप करें या पेस्ट करें..."
+                    rows="6"
+                ></textarea>
+                <div class="text-stats">
+                    <span id="charCount">0</span> अक्षर | <span id="wordCount">0</span> शब्द
+                </div>
+            </div>
+
+            <!-- Voice Settings -->
+            <div class="settings-section">
+                <h3>आवाज़ सेटिंग्स</h3>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="voiceSelect">आवाज़ चुनें:</label>
+                        <select id="voiceSelect">
+                            <option value="">डिफॉल्ट आवाज़</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="rateSelect">बोलने की गति:</label>
+                        <select id="rateSelect">
+                            <option value="0.5">बहुत धीमी</option>
+                            <option value="0.75">धीमी</option>
+                            <option value="1" selected>सामान्य</option>
+                            <option value="1.25">तेज</option>
+                            <option value="1.5">बहुत तेज</option>
+                            <option value="2">अति तेज</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="pitchSelect">आवाज़ की पिच:</label>
+                        <select id="pitchSelect">
+                            <option value="0.5">बहुत नीची</option>
+                            <option value="0.75">नीची</option>
+                            <option value="1" selected>सामान्य</option>
+                            <option value="1.25">ऊँची</option>
+                            <option value="1.5">बहुत ऊँची</option>
+                            <option value="2">अति ऊँची</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="volumeSelect">आवाज़ की volume:</label>
+                        <select id="volumeSelect">
+                            <option value="0.25">बहुत धीमी</option>
+                            <option value="0.5">धीमी</option>
+                            <option value="0.75">मध्यम</option>
+                            <option value="1" selected>तेज</option>
+                            <option value="1.5">बहुत तेज</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Selection -->
+            <div class="language-section">
+                <h3>भाषा चुनें</h3>
+                <div class="language-buttons">
+                    <button class="lang-btn active" data-lang="hi">हिंदी</button>
+                    <button class="lang-btn" data-lang="en">English</button>
+                    <button class="lang-btn" data-lang="ur">Urdu</button>
+                    <button class="lang-btn" data-lang="bn">Bengali</button>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-buttons">
+                <button id="speakBtn" class="btn-primary">
+                    <span class="btn-icon">🎤</span>
+                    बोलें
+                </button>
+                <button id="pauseBtn" class="btn-secondary" disabled>
+                    <span class="btn-icon">⏸️</span>
+                    रोकें
+                </button>
+                <button id="resumeBtn" class="btn-secondary" disabled>
+                    <span class="btn-icon">▶️</span>
+                    जारी रखें
+                </button>
+                <button id="stopBtn" class="btn-danger" disabled>
+                    <span class="btn-icon">⏹️</span>
+                    बंद करें
+                </button>
+            </div>
+
+            <!-- Sample Texts -->
+            <div class="sample-texts">
+                <h3>ट्राई करने के लिए नमूना टेक्स्ट</h3>
+                <div class="sample-buttons">
+                    <button class="sample-btn" data-text="नमस्ते! यह टेक्स्ट टू स्पीच कन्वर्टर है।">
+                        हिंदी नमूना
+                    </button>
+                    <button class="sample-btn" data-text="Hello! Welcome to Text to Speech Converter.">
+                        English Sample
+                    </button>
+                    <button class="sample-btn" data-text="यह टूल बिल्कुल मुफ्त है और आसानी से उपयोग करने योग्य है।">
+                        लंबा हिंदी टेक्स्ट
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="progress-section" id="progressSection" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">बोला जा रहा है...</div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <h3>🌟 विशेषताएं</h3>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h4>आसान उपयोग</h4>
+                    <p>सरल और user-friendly interface</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h4>मल्टी-लैंग्वेज</h4>
+                    <p>कई भाषाओं को सपोर्ट करता है</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h4>तेज और हल्का</h4>
+                    <p>बिना internet के काम करता है</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔊</div>
+                    <h4>कस्टम आवाज़</h4>
+                    <p>गति, पिच और volume adjust करें</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
