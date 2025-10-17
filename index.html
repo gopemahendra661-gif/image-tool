@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Tool — Crop · Resize · Compress</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #0f1724;
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 { color: #00c6ff; }
+  canvas {
+    border: 2px solid #00c6ff;
+    border-radius: 8px;
+    max-width: 100%;
+    margin-top: 10px;
+  }
+  input, button {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 6px;
+    border: none;
+  }
+  button {
+    background: #00c6ff;
+    color: #001;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  img {
+    margin-top: 10px;
+    border-radius: 10px;
+    max-width: 100%;
+  }
+  #controls {
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<h1>🖼️ Image Tool — Crop · Resize · Compress</h1>
+
+<input type="file" id="fileInput" accept="image/*"><br>
+
+<canvas id="canvas"></canvas>
+<div id="controls">
+  <br>
+  <label>Resize Width: <input type="number" id="resizeWidth" placeholder="width px" style="width:80px;"></label>
+  <label>Height: <input type="number" id="resizeHeight" placeholder="height px" style="width:80px;"></label>
+  <br><br>
+  <label>Compression (10-100): <input type="range" id="quality" min="10" max="100" value="80"></label>
+  <br><br>
+  <button id="cropBtn">Crop</button>
+  <button id="resizeBtn">Resize</button>
+  <button id="compressBtn">Compress</button>
+  <a id="downloadLink" style="display:none;" download="edited.jpg">⬇️ Download</a>
+</div>
+
+<h3>Preview:</h3>
+<img id="preview" />
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const preview = document.getElementById('preview');
+const resizeBtn = document.getElementById('resizeBtn');
+const cropBtn = document.getElementById('cropBtn');
+const compressBtn = document.getElementById('compressBtn');
+const downloadLink = document.getElementById('downloadLink');
+const resizeWidth = document.getElementById('resizeWidth');
+const resizeHeight = document.getElementById('resizeHeight');
+const qualityRange = document.getElementById('quality');
+
+let img = new Image();
+let startX, startY, endX, endY, isSelecting = false;
+
+fileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+canvas.addEventListener('mousedown', e => {
+  isSelecting = true;
+  const rect = canvas.getBoundingClientRect();
+  startX = e.clientX - rect.left;
+  startY = e.clientY - rect.top;
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (!isSelecting) return;
+  const rect = canvas.getBoundingClientRect();
+  endX = e.clientX - rect.left;
+  endY = e.clientY - rect.top;
+  ctx.drawImage(img, 0, 0);
+  ctx.strokeStyle = '#00c6ff';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+});
+
+canvas.addEventListener('mouseup', () => {
+  isSelecting = false;
+});
+
+cropBtn.onclick = () => {
+  if (!startX || !startY || !endX || !endY) return alert("पहले crop क्षेत्र चुनें!");
+  const w = endX - startX;
+  const h = endY - startY;
+  const cropped = document.createElement('canvas');
+  cropped.width = w;
+  cropped.height = h;
+  cropped.getContext('2d').drawImage(img, startX, startY, w, h, 0, 0, w, h);
+  img.src = cropped.toDataURL();
+  img.onload = () => {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    preview.src = img.src;
+  };
+};
+
+resizeBtn.onclick = () => {
+  const w = parseInt(resizeWidth.value);
+  const h = parseInt(resizeHeight.value);
+  if (!w || !h) return alert("कृपया width और height दोनों डालें!");
+  const resized = document.createElement('canvas');
+  resized.width = w;
+  resized.height = h;
+  resized.getContext('2d').drawImage(img, 0, 0, w, h);
+  img.src = resized.toDataURL();
+  img.onload = () => {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    preview.src = img.src;
+  };
+};
+
+compressBtn.onclick = () => {
+  const q = parseInt(qualityRange.value) / 100;
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    preview.src = url;
+    downloadLink.href = url;
+    downloadLink.style.display = 'inline-block';
+  }, 'image/jpeg', q);
+};
+</script>
+</body>
+</html>
