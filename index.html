@@ -3,321 +3,161 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🖼️ Image Tool — Crop · Resize · Compress</title>
+<title>All-in-One Image Tool</title>
 <style>
   body {
+    background: #121212;
+    color: #fff;
     font-family: Arial, sans-serif;
-    background: #0f1724;
-    color: white;
     text-align: center;
     padding: 20px;
   }
-  h1 { color: #00c6ff; }
-  canvas {
-    border: 2px solid #00c6ff;
-    border-radius: 8px;
-    max-width: 100%;
-    width: 500px;
-    height: 400px;
-    background: #101c33;
-    margin-top: 10px;
+  .container {
+    max-width: 800px;
+    margin: auto;
   }
-  input, button {
-    padding: 8px;
-    margin: 5px;
+  canvas {
+    border: 2px solid #00bcd4;
+    border-radius: 8px;
+    margin-top: 10px;
+    background: #222;
+    max-width: 100%;
+    height: auto;
+  }
+  input[type="file"], input[type="number"], button {
+    margin: 8px;
+    padding: 10px;
     border-radius: 6px;
     border: none;
   }
   button {
-    background: #00c6ff;
-    color: #001;
+    background: #00bcd4;
+    color: white;
     cursor: pointer;
-    font-weight: bold;
   }
-  img {
-    margin-top: 10px;
-    border-radius: 10px;
+  #preview {
+    margin-top: 15px;
+    display: none;
+  }
+  img.preview-img {
     max-width: 100%;
-  }
-  #controls { margin-top: 10px; }
-  a.download-link {
-    display: inline-block;
-    margin-top: 10px;
-    background: #00c6ff;
-    color: #000;
-    padding: 8px 12px;
     border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
+    margin-top: 10px;
   }
 </style>
 </head>
 <body>
-<h1>🖼️ Image Tool — Crop · Resize · Compress</h1>
-
-<input type="file" id="fileInput" accept="image/*"><br>
-
-<canvas id="canvas"></canvas>
-
-<div id="controls">
-  <label>Resize Width: <input type="number" id="resizeWidth" placeholder="width px" style="width:80px;"></label>
-  <label>Height: <input type="number" id="resizeHeight" placeholder="height px" style="width:80px;"></label>
-  <br><br>
-  <label>Compression (10-100): <input type="range" id="quality" min="10" max="100" value="80"></label>
-  <br><br>
-  <button id="cropBtn">Crop</button>
-  <button id="resizeBtn">Resize</button>
-  <button id="compressBtn">Compress</button>
-  <a id="downloadLink" class="download-link" download="edited.jpg" style="display:none;">⬇️ Download</a>
+<div class="container">
+  <h1>🖼️ Image Tool — Compress | Resize | Crop</h1>
+  
+  <input type="file" id="fileInput" accept="image/*">
+  <br>
+  <label>Width: <input type="number" id="width" value="400"></label>
+  <label>Height: <input type="number" id="height" value="400"></label>
+  <label>Quality (0-1): <input type="number" id="quality" value="0.8" step="0.1"></label>
+  <br>
+  <button onclick="resizeAndCompress()">Resize + Compress</button>
+  <button onclick="enableCrop()">Crop Mode</button>
+  <button onclick="downloadImage()">Download</button>
+  
+  <canvas id="canvas"></canvas>
+  <div id="preview">
+    <h3>Preview:</h3>
+    <img id="outputImg" class="preview-img" src="">
+  </div>
 </div>
-
-<h3>Preview:</h3>
-<img id="preview" />
 
 <script>
 const fileInput = document.getElementById('fileInput');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const preview = document.getElementById('preview');
-const resizeBtn = document.getElementById('resizeBtn');
-const cropBtn = document.getElementById('cropBtn');
-const compressBtn = document.getElementById('compressBtn');
-const downloadLink = document.getElementById('downloadLink');
-const resizeWidth = document.getElementById('resizeWidth');
-const resizeHeight = document.getElementById('resizeHeight');
-const qualityRange = document.getElementById('quality');
+const outputImg = document.getElementById('outputImg');
 
-let img = new Image();
-let startX, startY, endX, endY, isSelecting = false;
-let scale = 1;
+let image = new Image();
+let cropMode = false;
+let startX, startY, endX, endY, isDragging = false;
 
 fileInput.addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    img.onload = () => {
-      // Auto-fit image in fixed canvas
-      const maxW = canvas.width;
-      const maxH = canvas.height;
-      const ratio = Math.min(maxW / img.width, maxH / img.height);
-      scale = ratio;
-      const newW = img.width * ratio;
-      const newH = img.height * ratio;
-      const x = (canvas.width - newW) / 2;
-      const y = (canvas.height - newH) / 2;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, x, y, newW, newH);
-    };
-    img.src = reader.result;
+    image.onload = () => drawImageToCanvas(image);
+    image.src = reader.result;
   };
   reader.readAsDataURL(file);
 });
 
+function drawImageToCanvas(img) {
+  const maxWidth = 700;
+  const scale = Math.min(maxWidth / img.width, 1);
+  const newWidth = img.width * scale;
+  const newHeight = img.height * scale;
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+  ctx.drawImage(img, 0, 0, newWidth, newHeight);
+}
+
+function resizeAndCompress() {
+  if (!image.src) return alert("कृपया पहले इमेज चुनें!");
+  const w = parseInt(width.value);
+  const h = parseInt(height.value);
+  const q = parseFloat(quality.value);
+  canvas.width = w;
+  canvas.height = h;
+  ctx.drawImage(image, 0, 0, w, h);
+  const compressed = canvas.toDataURL("image/jpeg", q);
+  outputImg.src = compressed;
+  preview.style.display = "block";
+}
+
+function enableCrop() {
+  cropMode = true;
+  alert("Crop मोड चालू है — माउस से खींचकर क्षेत्र चुनें");
+}
+
 canvas.addEventListener('mousedown', e => {
-  isSelecting = true;
+  if (!cropMode) return;
   const rect = canvas.getBoundingClientRect();
   startX = e.clientX - rect.left;
   startY = e.clientY - rect.top;
+  isDragging = true;
 });
 
 canvas.addEventListener('mousemove', e => {
-  if (!isSelecting) return;
+  if (!isDragging || !cropMode) return;
   const rect = canvas.getBoundingClientRect();
   endX = e.clientX - rect.left;
   endY = e.clientY - rect.top;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const maxW = canvas.width;
-  const maxH = canvas.height;
-  const ratio = Math.min(maxW / img.width, maxH / img.height);
-  const newW = img.width * ratio;
-  const newH = img.height * ratio;
-  const x = (canvas.width - newW) / 2;
-  const y = (canvas.height - newH) / 2;
-  ctx.drawImage(img, x, y, newW, newH);
-  ctx.strokeStyle = '#00c6ff';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(startX, startY, endX - startX, endY - startY);
-});
-
-canvas.addEventListener('mouseup', () => { isSelecting = false; });
-
-cropBtn.onclick = () => {
-  if (!startX || !startY || !endX || !endY) return alert("पहले crop क्षेत्र चुनें!");
-  const w = endX - startX;
-  const h = endY - startY;
-  const cropped = document.createElement('canvas');
-  cropped.width = w;
-  cropped.height = h;
-  cropped.getContext('2d').drawImage(canvas, startX, startY, w, h, 0, 0, w, h);
-  img.src = cropped.toDataURL();
-  img.onload = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    preview.src = img.src;
-    downloadLink.style.display = 'inline-block';
-  };
-};
-
-resizeBtn.onclick = () => {
-  const w = parseInt(resizeWidth.value);
-  const h = parseInt(resizeHeight.value);
-  if (!w || !h) return alert("कृपया width और height दोनों डालें!");
-  const resized = document.createElement('canvas');
-  resized.width = w;
-  resized.height = h;
-  resized.getContext('2d').drawImage(img, 0, 0, w, h);
-  img.src = resized.toDataURL();
-  img.onload = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
-    const newW = img.width * ratio;
-    const newH = img.height * ratio;
-    const x = (canvas.width - newW) / 2;
-    const y = (canvas.height - newH) / 2;
-    ctx.drawImage(img, x, y, newW, newH);
-    preview.src = img.src;
-    downloadLink.style.display = 'inline-block';
-  };
-};
-
-compressBtn.onclick = () => {
-  const q = parseInt(qualityRange.value) / 100;
-  canvas.toBlob(blob => {
-    const url = URL.createObjectURL(blob);
-    preview.src = url;
-    downloadLink.href = url;
-    downloadLink.style.display = 'inline-block';
-  }, 'image/jpeg', q);
-};
-</script>
-</body>
-</html>
-    max-width: 100%;
-  }
-  #controls {
-    margin-top: 10px;
-  }
-</style>
-</head>
-<body>
-<h1>🖼️ Image Tool — Crop · Resize · Compress</h1>
-
-<input type="file" id="fileInput" accept="image/*"><br>
-
-<canvas id="canvas"></canvas>
-<div id="controls">
-  <br>
-  <label>Resize Width: <input type="number" id="resizeWidth" placeholder="width px" style="width:80px;"></label>
-  <label>Height: <input type="number" id="resizeHeight" placeholder="height px" style="width:80px;"></label>
-  <br><br>
-  <label>Compression (10-100): <input type="range" id="quality" min="10" max="100" value="80"></label>
-  <br><br>
-  <button id="cropBtn">Crop</button>
-  <button id="resizeBtn">Resize</button>
-  <button id="compressBtn">Compress</button>
-  <a id="downloadLink" style="display:none;" download="edited.jpg">⬇️ Download</a>
-</div>
-
-<h3>Preview:</h3>
-<img id="preview" />
-
-<script>
-const fileInput = document.getElementById('fileInput');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const preview = document.getElementById('preview');
-const resizeBtn = document.getElementById('resizeBtn');
-const cropBtn = document.getElementById('cropBtn');
-const compressBtn = document.getElementById('compressBtn');
-const downloadLink = document.getElementById('downloadLink');
-const resizeWidth = document.getElementById('resizeWidth');
-const resizeHeight = document.getElementById('resizeHeight');
-const qualityRange = document.getElementById('quality');
-
-let img = new Image();
-let startX, startY, endX, endY, isSelecting = false;
-
-fileInput.addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-    };
-    img.src = reader.result;
-  };
-  reader.readAsDataURL(file);
-});
-
-canvas.addEventListener('mousedown', e => {
-  isSelecting = true;
-  const rect = canvas.getBoundingClientRect();
-  startX = e.clientX - rect.left;
-  startY = e.clientY - rect.top;
-});
-
-canvas.addEventListener('mousemove', e => {
-  if (!isSelecting) return;
-  const rect = canvas.getBoundingClientRect();
-  endX = e.clientX - rect.left;
-  endY = e.clientY - rect.top;
-  ctx.drawImage(img, 0, 0);
-  ctx.strokeStyle = '#00c6ff';
-  ctx.lineWidth = 2;
+  drawImageToCanvas(image);
+  ctx.strokeStyle = "yellow";
   ctx.strokeRect(startX, startY, endX - startX, endY - startY);
 });
 
 canvas.addEventListener('mouseup', () => {
-  isSelecting = false;
+  if (!cropMode) return;
+  isDragging = false;
+  cropMode = false;
+  const cropW = endX - startX;
+  const cropH = endY - startY;
+  const croppedData = ctx.getImageData(startX, startY, cropW, cropH);
+  canvas.width = cropW;
+  canvas.height = cropH;
+  ctx.putImageData(croppedData, 0, 0);
+  const croppedURL = canvas.toDataURL("image/jpeg", 1.0);
+  outputImg.src = croppedURL;
+  preview.style.display = "block";
 });
 
-cropBtn.onclick = () => {
-  if (!startX || !startY || !endX || !endY) return alert("पहले crop क्षेत्र चुनें!");
-  const w = endX - startX;
-  const h = endY - startY;
-  const cropped = document.createElement('canvas');
-  cropped.width = w;
-  cropped.height = h;
-  cropped.getContext('2d').drawImage(img, startX, startY, w, h, 0, 0, w, h);
-  img.src = cropped.toDataURL();
-  img.onload = () => {
-    canvas.width = img.width;
-    canvas.height = img.height;
-    ctx.drawImage(img, 0, 0);
-    preview.src = img.src;
-  };
-};
-
-resizeBtn.onclick = () => {
-  const w = parseInt(resizeWidth.value);
-  const h = parseInt(resizeHeight.value);
-  if (!w || !h) return alert("कृपया width और height दोनों डालें!");
-  const resized = document.createElement('canvas');
-  resized.width = w;
-  resized.height = h;
-  resized.getContext('2d').drawImage(img, 0, 0, w, h);
-  img.src = resized.toDataURL();
-  img.onload = () => {
-    canvas.width = img.width;
-    canvas.height = img.height;
-    ctx.drawImage(img, 0, 0);
-    preview.src = img.src;
-  };
-};
-
-compressBtn.onclick = () => {
-  const q = parseInt(qualityRange.value) / 100;
-  canvas.toBlob(blob => {
-    const url = URL.createObjectURL(blob);
-    preview.src = url;
-    downloadLink.href = url;
-    downloadLink.style.display = 'inline-block';
-  }, 'image/jpeg', q);
-};
+function downloadImage() {
+  if (!outputImg.src) return alert("पहले कोई इमेज एडिट करें!");
+  const a = document.createElement('a');
+  a.href = outputImg.src;
+  a.download = 'edited-image.jpg';
+  a.click();
+}
 </script>
 </body>
 </html>
