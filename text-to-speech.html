@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text to Speech Converter - टेक्स्ट टू स्पीच कन्वर्टर</title>
+    <title>Text to Speech Converter</title>
     <style>
         * {
             margin: 0;
@@ -12,110 +12,90 @@
         }
 
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --success-color: #27ae60;
-            --dark-color: #2c3e50;
-            --light-color: #ecf0f1;
-            --text-color: #333;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --border-radius: 12px;
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --text: #333;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: var(--text-color);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
-            line-height: 1.6;
+            padding: 15px;
         }
 
         .container {
-            max-width: 100%;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 0 10px;
+            margin-bottom: 25px;
+            padding: 10px;
         }
 
         header h1 {
-            color: var(--dark-color);
-            margin-bottom: 10px;
-            font-size: 2em;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-size: clamp(1.5rem, 4vw, 2rem);
         }
 
         header p {
-            color: #7f8c8d;
-            font-size: 1.1em;
+            color: #666;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
         }
 
         .converter-box {
             background: #f8f9fa;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin-bottom: 30px;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
             border: 1px solid #e9ecef;
         }
 
         .input-section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .input-section label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--dark-color);
+            color: var(--dark);
         }
 
         #textInput {
             width: 100%;
             padding: 15px;
-            border: 2px solid var(--primary-color);
+            border: 2px solid var(--primary);
             border-radius: 8px;
             font-size: 16px;
             resize: vertical;
             min-height: 120px;
             font-family: inherit;
-            transition: border-color 0.3s ease;
-        }
-
-        #textInput:focus {
-            outline: none;
-            border-color: #2980b9;
         }
 
         .text-stats {
             text-align: right;
             margin-top: 8px;
-            color: #7f8c8d;
+            color: #666;
             font-size: 0.9em;
-        }
-
-        .settings-section {
-            margin-bottom: 25px;
-        }
-
-        .settings-section h3 {
-            margin-bottom: 15px;
-            color: var(--dark-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
         }
 
         .settings-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
+            margin: 20px 0;
         }
 
         .setting-group {
@@ -126,68 +106,30 @@
         .setting-group label {
             margin-bottom: 5px;
             font-weight: 500;
-            color: var(--dark-color);
+            color: var(--dark);
+            font-size: 0.9em;
         }
 
         .setting-group select {
-            padding: 10px 12px;
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 14px;
-            background: white;
-            cursor: pointer;
-        }
-
-        .language-section {
-            margin-bottom: 25px;
-        }
-
-        .language-section h3 {
-            margin-bottom: 15px;
-            color: var(--dark-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
-        }
-
-        .language-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .lang-btn {
-            padding: 10px 20px;
-            border: 2px solid var(--primary-color);
-            background: white;
-            color: var(--primary-color);
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .lang-btn:hover {
-            background: #e8f4fc;
-        }
-
-        .lang-btn.active {
-            background: var(--primary-color);
-            color: white;
         }
 
         .control-buttons {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
         }
 
-        .btn-primary, .btn-secondary, .btn-danger, .btn-success {
-            padding: 12px 20px;
+        .control-btn {
+            padding: 12px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             transition: all 0.3s ease;
             display: flex;
@@ -196,238 +138,124 @@
             gap: 8px;
         }
 
-        .btn-primary {
-            background: var(--secondary-color);
+        .btn-speak {
+            background: var(--secondary);
             color: white;
         }
 
-        .btn-primary:hover:not(:disabled) {
-            background: #27ae60;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: var(--primary-color);
+        .btn-pause {
+            background: #f39c12;
             color: white;
         }
 
-        .btn-secondary:hover:not(:disabled) {
-            background: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background: var(--danger-color);
+        .btn-resume {
+            background: var(--primary);
             color: white;
         }
 
-        .btn-danger:hover:not(:disabled) {
-            background: #c0392b;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: var(--success-color);
+        .btn-stop {
+            background: var(--danger);
             color: white;
         }
 
-        .btn-success:hover:not(:disabled) {
-            background: #219653;
-            transform: translateY(-2px);
+        .btn-download {
+            background: #9b59b6;
+            color: white;
         }
 
-        button:disabled {
-            opacity: 0.6;
+        .control-btn:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
-            transform: none !important;
         }
 
-        .btn-icon {
-            font-size: 1.2em;
-        }
-
-        .sample-texts {
-            margin-bottom: 25px;
-        }
-
-        .sample-texts h3 {
-            margin-bottom: 15px;
-            color: var(--dark-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
+        .control-btn:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
         .sample-buttons {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            margin: 15px 0;
         }
 
         .sample-btn {
-            padding: 8px 16px;
+            padding: 8px 15px;
             border: 1px solid #ddd;
             background: white;
-            color: var(--text-color);
             border-radius: 6px;
             cursor: pointer;
+            font-size: 0.9em;
             transition: all 0.3s ease;
         }
 
         .sample-btn:hover {
+            border-color: var(--primary);
             background: #f8f9fa;
-            border-color: var(--primary-color);
+        }
+
+        .audio-section {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .audio-player {
+            width: 100%;
+            max-width: 400px;
+            margin: 10px auto;
+        }
+
+        .download-section {
+            background: #e8f5e8;
+            border: 1px solid #27ae60;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
         }
 
         .progress-section {
-            margin-top: 20px;
+            margin: 15px 0;
         }
 
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: #e0e0e0;
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
-            margin-bottom: 10px;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
             width: 0%;
             transition: width 0.3s ease;
-            border-radius: 4px;
         }
 
-        .progress-text {
-            text-align: center;
-            color: var(--dark-color);
-            font-weight: 500;
-        }
-
-        .audio-player {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .audio-player audio {
-            width: 100%;
-            max-width: 400px;
-            margin: 10px 0;
-        }
-
-        .download-info {
-            background: #e8f5e8;
-            border: 1px solid var(--success-color);
+        .device-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
             border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
+            padding: 12px;
+            margin: 15px 0;
             text-align: center;
-        }
-
-        .download-info h4 {
-            color: var(--success-color);
-            margin-bottom: 10px;
-        }
-
-        .download-links {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .features-section {
-            margin-top: 30px;
-        }
-
-        .features-section h3 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: var(--dark-color);
-            font-size: 1.5em;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            text-align: center;
-            box-shadow: var(--shadow);
-            border: 1px solid #e9ecef;
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-        }
-
-        .feature-card h4 {
-            color: var(--dark-color);
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        .feature-card p {
-            color: #7f8c8d;
-            line-height: 1.5;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .speaking {
-            animation: pulse 1.5s infinite;
+            font-size: 0.9em;
+            color: #856404;
         }
 
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
-            }
-            
-            header h1 {
-                font-size: 1.5em;
-            }
-            
-            .settings-grid {
-                grid-template-columns: 1fr;
+                margin: 10px;
             }
             
             .control-buttons {
                 grid-template-columns: 1fr 1fr;
             }
             
-            .language-buttons {
-                justify-content: center;
-            }
-            
-            .features-grid {
+            .settings-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -445,182 +273,136 @@
                 flex-direction: column;
             }
         }
+
+        .speaking {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎤 टेक्स्ट टू स्पीच कन्वर्टर</h1>
-            <p>अपना टेक्स्ट डालें और उसे आवाज़ में सुनें | डाउनलोड भी करें</p>
+            <h1>🎤 Text to Speech Converter</h1>
+            <p>Convert text to speech and download audio</p>
         </header>
 
         <div class="converter-box">
-            <!-- Text Input Area -->
+            <!-- Text Input -->
             <div class="input-section">
-                <label for="textInput">टेक्स्ट डालें:</label>
+                <label for="textInput">Enter Text:</label>
                 <textarea 
                     id="textInput" 
-                    placeholder="यहाँ अपना टेक्स्ट टाइप करें या पेस्ट करें..."
-                    rows="6"
+                    placeholder="Type or paste your text here..."
+                    rows="5"
                 ></textarea>
                 <div class="text-stats">
-                    <span id="charCount">0</span> अक्षर | <span id="wordCount">0</span> शब्द
+                    <span id="charCount">0</span> characters | <span id="wordCount">0</span> words
                 </div>
             </div>
 
-            <!-- Voice Settings -->
-            <div class="settings-section">
-                <h3>आवाज़ सेटिंग्स</h3>
-                <div class="settings-grid">
-                    <div class="setting-group">
-                        <label for="voiceSelect">आवाज़ चुनें:</label>
-                        <select id="voiceSelect">
-                            <option value="">डिफॉल्ट आवाज़</option>
-                        </select>
-                    </div>
-                    
-                    <div class="setting-group">
-                        <label for="rateSelect">बोलने की गति:</label>
-                        <select id="rateSelect">
-                            <option value="0.5">बहुत धीमी</option>
-                            <option value="0.75">धीमी</option>
-                            <option value="1" selected>सामान्य</option>
-                            <option value="1.25">तेज</option>
-                            <option value="1.5">बहुत तेज</option>
-                            <option value="2">अति तेज</option>
-                        </select>
-                    </div>
+            <!-- Settings -->
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <label for="voiceSelect">Voice:</label>
+                    <select id="voiceSelect">
+                        <option value="">Default Voice</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="rateSelect">Speed:</label>
+                    <select id="rateSelect">
+                        <option value="0.5">Very Slow</option>
+                        <option value="0.75">Slow</option>
+                        <option value="1" selected>Normal</option>
+                        <option value="1.25">Fast</option>
+                        <option value="1.5">Very Fast</option>
+                    </select>
+                </div>
 
-                    <div class="setting-group">
-                        <label for="pitchSelect">आवाज़ की पिच:</label>
-                        <select id="pitchSelect">
-                            <option value="0.5">बहुत नीची</option>
-                            <option value="0.75">नीची</option>
-                            <option value="1" selected>सामान्य</option>
-                            <option value="1.25">ऊँची</option>
-                            <option value="1.5">बहुत ऊँची</option>
-                            <option value="2">अति ऊँची</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label for="volumeSelect">आवाज़ की volume:</label>
-                        <select id="volumeSelect">
-                            <option value="0.25">बहुत धीमी</option>
-                            <option value="0.5">धीमी</option>
-                            <option value="0.75">मध्यम</option>
-                            <option value="1" selected>तेज</option>
-                            <option value="1.5">बहुत तेज</option>
-                        </select>
-                    </div>
+                <div class="setting-group">
+                    <label for="volumeSelect">Volume:</label>
+                    <select id="volumeSelect">
+                        <option value="0.25">Low</option>
+                        <option value="0.5">Medium</option>
+                        <option value="0.75">High</option>
+                        <option value="1" selected>Very High</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Language Selection -->
-            <div class="language-section">
-                <h3>भाषा चुनें</h3>
-                <div class="language-buttons">
-                    <button class="lang-btn active" data-lang="hi">हिंदी</button>
-                    <button class="lang-btn" data-lang="en">English</button>
-                    <button class="lang-btn" data-lang="ur">Urdu</button>
-                    <button class="lang-btn" data-lang="bn">Bengali</button>
-                </div>
+            <!-- Device Warning -->
+            <div class="device-warning" id="deviceWarning">
+                ⚠️ For best experience, allow microphone access when prompted
             </div>
 
             <!-- Control Buttons -->
             <div class="control-buttons">
-                <button id="speakBtn" class="btn-primary">
-                    <span class="btn-icon">🎤</span>
-                    बोलें
+                <button id="speakBtn" class="control-btn btn-speak">
+                    <span>🎤</span> Speak
                 </button>
-                <button id="pauseBtn" class="btn-secondary" disabled>
-                    <span class="btn-icon">⏸️</span>
-                    रोकें
+                <button id="pauseBtn" class="control-btn btn-pause" disabled>
+                    <span>⏸️</span> Pause
                 </button>
-                <button id="resumeBtn" class="btn-secondary" disabled>
-                    <span class="btn-icon">▶️</span>
-                    जारी रखें
+                <button id="resumeBtn" class="control-btn btn-resume" disabled>
+                    <span>▶️</span> Resume
                 </button>
-                <button id="stopBtn" class="btn-danger" disabled>
-                    <span class="btn-icon">⏹️</span>
-                    बंद करें
+                <button id="stopBtn" class="control-btn btn-stop" disabled>
+                    <span>⏹️</span> Stop
                 </button>
-                <button id="downloadBtn" class="btn-success" disabled>
-                    <span class="btn-icon">💾</span>
-                    डाउनलोड
+                <button id="downloadBtn" class="control-btn btn-download" disabled>
+                    <span>💾</span> Download
                 </button>
             </div>
 
-            <!-- Audio Player Section -->
-            <div class="audio-player">
-                <div id="audioPreview" style="display: none;">
-                    <h4>🎧 ऑडियो प्रिव्यू</h4>
-                    <audio id="audioPlayer" controls></audio>
-                    <div class="download-info">
-                        <h4>💾 डाउनलोड ऑप्शन</h4>
-                        <div class="download-links">
-                            <button id="downloadMp3" class="btn-success">MP3 डाउनलोड</button>
-                            <button id="downloadWav" class="btn-success">WAV डाउनलोड</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sample Texts -->
-            <div class="sample-texts">
-                <h3>ट्राई करने के लिए नमूना टेक्स्ट</h3>
-                <div class="sample-buttons">
-                    <button class="sample-btn" data-text="नमस्ते! यह टेक्स्ट टू स्पीच कन्वर्टर है।">
-                        हिंदी नमूना
-                    </button>
-                    <button class="sample-btn" data-text="Hello! Welcome to Text to Speech Converter.">
-                        English Sample
-                    </button>
-                    <button class="sample-btn" data-text="यह टूल बिल्कुल मुफ्त है और आसानी से उपयोग करने योग्य है। आप टेक्स्ट को आवाज़ में बदल सकते हैं और डाउनलोड भी कर सकते हैं।">
-                        लंबा हिंदी टेक्स्ट
-                    </button>
-                </div>
-            </div>
-
-            <!-- Progress Indicator -->
+            <!-- Progress -->
             <div class="progress-section" id="progressSection" style="display: none;">
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
-                <div class="progress-text" id="progressText">बोला जा रहा है...</div>
+                <div style="text-align: center; margin-top: 8px; font-size: 0.9em;">
+                    <span id="progressText">Speaking...</span>
+                </div>
             </div>
-        </div>
 
-        <!-- Features Section -->
-        <div class="features-section">
-            <h3>🌟 विशेषताएं</h3>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h4>आसान उपयोग</h4>
-                    <p>सरल और user-friendly interface</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌍</div>
-                    <h4>मल्टी-लैंग्वेज</h4>
-                    <p>कई भाषाओं को सपोर्ट करता है</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💾</div>
-                    <h4>ऑडियो डाउनलोड</h4>
-                    <p>आवाज़ को डाउनलोड कर सकते हैं</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔊</div>
-                    <h4>कस्टम आवाज़</h4>
-                    <p>गति, पिच और volume adjust करें</p>
+            <!-- Sample Texts -->
+            <div class="sample-buttons">
+                <button class="sample-btn" data-text="Hello! Welcome to Text to Speech Converter.">
+                    English Sample
+                </button>
+                <button class="sample-btn" data-text="This is a free tool that works in both browser and mobile app.">
+                    Long English Text
+                </button>
+                <button class="sample-btn" data-text="You can convert any text to speech and download the audio file.">
+                    Features Sample
+                </button>
+            </div>
+
+            <!-- Audio Player -->
+            <div class="audio-section" id="audioSection" style="display: none;">
+                <h3>🎧 Audio Preview</h3>
+                <audio id="audioPlayer" class="audio-player" controls></audio>
+                
+                <div class="download-section">
+                    <h4>💾 Download Options</h4>
+                    <div style="margin-top: 10px;">
+                        <button id="downloadWav" class="control-btn btn-download" style="padding: 8px 15px;">
+                            Download WAV
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        class TextToSpeechConverter {
+        class UniversalTextToSpeech {
             constructor() {
                 this.speech = new SpeechSynthesisUtterance();
                 this.synth = window.speechSynthesis;
@@ -629,21 +411,35 @@
                 this.mediaRecorder = null;
                 this.audioChunks = [];
                 this.recordedAudio = null;
+                this.isMobile = this.detectMobile();
                 
                 this.initializeElements();
                 this.bindEvents();
                 this.loadVoices();
+                this.setupMobileOptimizations();
                 
                 speechSynthesis.addEventListener('voiceschanged', () => {
                     this.loadVoices();
                 });
             }
 
+            detectMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+
+            setupMobileOptimizations() {
+                if (this.isMobile) {
+                    document.getElementById('deviceWarning').style.display = 'block';
+                    // Mobile-friendly defaults
+                    this.speech.rate = 1.0;
+                    this.speech.volume = 1.0;
+                }
+            }
+
             initializeElements() {
                 this.textInput = document.getElementById('textInput');
                 this.voiceSelect = document.getElementById('voiceSelect');
                 this.rateSelect = document.getElementById('rateSelect');
-                this.pitchSelect = document.getElementById('pitchSelect');
                 this.volumeSelect = document.getElementById('volumeSelect');
                 this.speakBtn = document.getElementById('speakBtn');
                 this.pauseBtn = document.getElementById('pauseBtn');
@@ -655,33 +451,26 @@
                 this.progressSection = document.getElementById('progressSection');
                 this.progressFill = document.getElementById('progressFill');
                 this.progressText = document.getElementById('progressText');
-                this.langButtons = document.querySelectorAll('.lang-btn');
-                this.sampleButtons = document.querySelectorAll('.sample-btn');
-                this.audioPreview = document.getElementById('audioPreview');
+                this.audioSection = document.getElementById('audioSection');
                 this.audioPlayer = document.getElementById('audioPlayer');
-                this.downloadMp3Btn = document.getElementById('downloadMp3');
                 this.downloadWavBtn = document.getElementById('downloadWav');
+                
+                this.sampleButtons = document.querySelectorAll('.sample-btn');
             }
 
             bindEvents() {
-                this.textInput.addEventListener('input', () => {
-                    this.updateStats();
-                });
+                this.textInput.addEventListener('input', () => this.updateStats());
 
                 this.speakBtn.addEventListener('click', () => this.speak());
                 this.pauseBtn.addEventListener('click', () => this.pause());
                 this.resumeBtn.addEventListener('click', () => this.resume());
                 this.stopBtn.addEventListener('click', () => this.stop());
                 this.downloadBtn.addEventListener('click', () => this.downloadAudio());
-                
+                this.downloadWavBtn.addEventListener('click', () => this.downloadAudio());
+
                 this.voiceSelect.addEventListener('change', () => this.updateVoice());
                 this.rateSelect.addEventListener('change', () => this.updateSettings());
-                this.pitchSelect.addEventListener('change', () => this.updateSettings());
                 this.volumeSelect.addEventListener('change', () => this.updateSettings());
-
-                this.langButtons.forEach(btn => {
-                    btn.addEventListener('click', (e) => this.changeLanguage(e.target));
-                });
 
                 this.sampleButtons.forEach(btn => {
                     btn.addEventListener('click', (e) => {
@@ -690,18 +479,15 @@
                     });
                 });
 
-                this.downloadMp3Btn.addEventListener('click', () => this.downloadAsMp3());
-                this.downloadWavBtn.addEventListener('click', () => this.downloadAsWav());
-
                 this.speech.onstart = () => this.onSpeechStart();
                 this.speech.onend = () => this.onSpeechEnd();
                 this.speech.onerror = (event) => this.onSpeechError(event);
-                this.speech.onboundary = (event) => this.onSpeechBoundary(event);
             }
 
             loadVoices() {
-                this.voiceSelect.innerHTML = '<option value="">डिफॉल्ट आवाज़</option>';
+                this.voiceSelect.innerHTML = '<option value="">Default Voice</option>';
                 const voices = this.synth.getVoices();
+                
                 voices.forEach(voice => {
                     const option = document.createElement('option');
                     option.value = voice.name;
@@ -713,15 +499,17 @@
             updateVoice() {
                 const voices = this.synth.getVoices();
                 const selectedVoice = this.voiceSelect.value;
+                
                 if (selectedVoice) {
                     const voice = voices.find(v => v.name === selectedVoice);
-                    if (voice) this.speech.voice = voice;
+                    if (voice) {
+                        this.speech.voice = voice;
+                    }
                 }
             }
 
             updateSettings() {
                 this.speech.rate = parseFloat(this.rateSelect.value);
-                this.speech.pitch = parseFloat(this.pitchSelect.value);
                 this.speech.volume = parseFloat(this.volumeSelect.value);
             }
 
@@ -729,28 +517,16 @@
                 const text = this.textInput.value;
                 const charCount = text.length;
                 const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+                
                 this.charCount.textContent = charCount;
                 this.wordCount.textContent = wordCount;
-            }
-
-            changeLanguage(button) {
-                this.langButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                const lang = button.dataset.lang;
-                const voices = this.synth.getVoices();
-                const voice = voices.find(v => v.lang.startsWith(lang));
-                if (voice) {
-                    this.speech.voice = voice;
-                    this.voiceSelect.value = voice.name;
-                }
-                this.showMessage(`भाषा बदली गई: ${button.textContent}`, 'success');
             }
 
             async speak() {
                 const text = this.textInput.value.trim();
                 
                 if (!text) {
-                    this.showMessage('कृपया बोलने के लिए कुछ टेक्स्ट डालें!', 'error');
+                    this.showMessage('Please enter some text to speak!', 'error');
                     return;
                 }
 
@@ -758,8 +534,15 @@
                     this.stop();
                 }
 
-                await this.startRecording();
+                // For mobile devices, we'll use a simpler approach without recording
+                if (this.isMobile) {
+                    await this.speakWithoutRecording(text);
+                } else {
+                    await this.speakWithRecording(text);
+                }
+            }
 
+            async speakWithoutRecording(text) {
                 this.speech.text = text;
                 this.updateSettings();
                 this.updateVoice();
@@ -767,30 +550,51 @@
                 this.synth.speak(this.speech);
             }
 
-            async startRecording() {
+            async speakWithRecording(text) {
                 try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    this.mediaRecorder = new MediaRecorder(stream);
-                    this.audioChunks = [];
-
-                    this.mediaRecorder.ondataavailable = (event) => {
-                        this.audioChunks.push(event.data);
-                    };
-
-                    this.mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-                        this.recordedAudio = audioBlob;
-                        this.showAudioPreview(audioBlob);
-                        this.downloadBtn.disabled = false;
-                        
-                        stream.getTracks().forEach(track => track.stop());
-                    };
-
-                    this.mediaRecorder.start();
+                    await this.startRecording();
+                    this.speech.text = text;
+                    this.updateSettings();
+                    this.updateVoice();
+                    this.synth.speak(this.speech);
                 } catch (error) {
-                    console.error('Recording failed:', error);
-                    this.showMessage('ऑडियो रिकॉर्डिंग में समस्या आई!', 'error');
+                    console.error('Recording failed, falling back to simple speech:', error);
+                    this.speakWithoutRecording(text);
                 }
+            }
+
+            async startRecording() {
+                if (!navigator.mediaDevices) {
+                    throw new Error('Media devices not supported');
+                }
+
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        sampleRate: 44100
+                    } 
+                });
+                
+                this.mediaRecorder = new MediaRecorder(stream);
+                this.audioChunks = [];
+
+                this.mediaRecorder.ondataavailable = (event) => {
+                    this.audioChunks.push(event.data);
+                };
+
+                this.mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(this.audioChunks, { 
+                        type: 'audio/wav' 
+                    });
+                    this.recordedAudio = audioBlob;
+                    this.showAudioPreview(audioBlob);
+                    this.downloadBtn.disabled = false;
+                    
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                this.mediaRecorder.start();
             }
 
             stopRecording() {
@@ -802,7 +606,7 @@
             showAudioPreview(audioBlob) {
                 const audioUrl = URL.createObjectURL(audioBlob);
                 this.audioPlayer.src = audioUrl;
-                this.audioPreview.style.display = 'block';
+                this.audioSection.style.display = 'block';
             }
 
             pause() {
@@ -810,7 +614,7 @@
                     this.synth.pause();
                     this.isPaused = true;
                     this.updateButtonStates();
-                    this.progressText.textContent = 'रुका हुआ...';
+                    this.progressText.textContent = 'Paused...';
                 }
             }
 
@@ -819,7 +623,7 @@
                     this.synth.resume();
                     this.isPaused = false;
                     this.updateButtonStates();
-                    this.progressText.textContent = 'बोला जा रहा है...';
+                    this.progressText.textContent = 'Speaking...';
                 }
             }
 
@@ -834,7 +638,7 @@
 
             downloadAudio() {
                 if (!this.recordedAudio) {
-                    this.showMessage('पहले कुछ टेक्स्ट बोलें!', 'error');
+                    this.showMessage('Please speak some text first!', 'error');
                     return;
                 }
 
@@ -842,20 +646,13 @@
                 const url = URL.createObjectURL(this.recordedAudio);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `text-to-speech-${timestamp}.wav`;
+                a.download = `speech-${timestamp}.wav`;
+                document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
-                this.showMessage('ऑडियो डाउनलोड हो गया!', 'success');
-            }
-
-            downloadAsMp3() {
-                this.showMessage('MP3 कन्वर्जन के लिए advanced processing की जरूरत है', 'info');
-                this.downloadAudio();
-            }
-
-            downloadAsWav() {
-                this.downloadAudio();
+                this.showMessage('Audio downloaded successfully!', 'success');
             }
 
             onSpeechStart() {
@@ -873,7 +670,12 @@
                 this.updateButtonStates();
                 this.hideProgress();
                 this.speakBtn.classList.remove('speaking');
-                this.showMessage('टेक्स्ट बोलना पूरा हुआ! अब आप डाउनलोड कर सकते हैं।', 'success');
+                
+                if (this.recordedAudio) {
+                    this.showMessage('Speech completed! You can now download the audio.', 'success');
+                } else {
+                    this.showMessage('Speech completed!', 'success');
+                }
             }
 
             onSpeechError(event) {
@@ -884,15 +686,7 @@
                 this.updateButtonStates();
                 this.hideProgress();
                 this.speakBtn.classList.remove('speaking');
-                this.showMessage('आवाज़ बजाने में समस्या आई!', 'error');
-            }
-
-            onSpeechBoundary(event) {
-                if (event.name === 'word') {
-                    const text = this.textInput.value;
-                    const progress = (event.charIndex / text.length) * 100;
-                    this.progressFill.style.width = `${progress}%`;
-                }
+                this.showMessage('Error in speech synthesis!', 'error');
             }
 
             updateButtonStates() {
@@ -906,7 +700,7 @@
             showProgress() {
                 this.progressSection.style.display = 'block';
                 this.progressFill.style.width = '0%';
-                this.progressText.textContent = 'बोला जा रहा है...';
+                this.progressText.textContent = 'Speaking...';
             }
 
             hideProgress() {
@@ -915,41 +709,62 @@
             }
 
             showMessage(message, type) {
+                // Remove existing message
                 const existingMessage = document.querySelector('.message');
                 if (existingMessage) {
                     existingMessage.remove();
                 }
 
+                // Create new message
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}`;
                 messageDiv.style.cssText = `
                     position: fixed;
                     top: 20px;
                     right: 20px;
-                    padding: 15px 20px;
+                    padding: 12px 18px;
                     border-radius: 8px;
                     color: white;
                     font-weight: 600;
                     z-index: 1000;
                     animation: slideIn 0.3s ease;
-                    background: ${type === 'success' ? '#27ae60' : 
-                                type === 'error' ? '#e74c3c' : 
-                                type === 'info' ? '#3498db' : '#f39c12'};
+                    background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
                     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    max-width: 300px;
+                    word-wrap: break-word;
                 `;
                 
                 messageDiv.textContent = message;
                 document.body.appendChild(messageDiv);
 
+                // Remove after 3 seconds
                 setTimeout(() => {
-                    messageDiv.remove();
+                    if (messageDiv.parentNode) {
+                        messageDiv.parentNode.removeChild(messageDiv);
+                    }
                 }, 3000);
             }
         }
 
-        // Initialize the converter when page loads
+        // Add CSS for message animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new TextToSpeechConverter();
+            new UniversalTextToSpeech();
         });
     </script>
 </body>
